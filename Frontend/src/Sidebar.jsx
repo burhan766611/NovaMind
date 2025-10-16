@@ -105,7 +105,7 @@ const Sidebar = () => {
         </ul>
 
         <div className="sign">
-          <p>By Apna College &hearts;</p>
+          <p>By Burhan Sheikh &hearts;</p>
         </div>
       </section>
     </>
