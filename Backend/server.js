@@ -5,6 +5,12 @@ import mongoose from 'mongoose';
 import chatRoutes from './routes/chat.js'
 import userRoutes from './routes/user.js'
 import cookieParser from 'cookie-parser';
+import path from "path";
+import { fileURLToPath } from "url";
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 8080;
@@ -20,10 +26,10 @@ app.use(cors({
 app.use("/api", chatRoutes);
 app.use("/user", userRoutes);
 
-app.use(express.static(path.join(process.cwd(), "dist")));
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(process.cwd(), "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
 app.listen(PORT, () => {
