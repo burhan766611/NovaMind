@@ -2,8 +2,11 @@ import { useContext, useEffect } from "react";
 import "./sidebar.css";
 import { MyContext } from "./MyContext";
 import { v1 as uuidv1 } from "uuid";
+import { useNavigate } from "react-router-dom";
+
 
 const Sidebar = () => {
+  let navigate = useNavigate();
   const {
     allThreads,
     setAllThreads,
@@ -13,14 +16,22 @@ const Sidebar = () => {
     setReply,
     setCurrentThreadId,
     setPrevChats,
+    isloggedIn,
+    API_BASE
   } = useContext(MyContext);
 
   const changeThread = async (newThreadId) => {
+    if(!isloggedIn ){
+        navigate("/login")
+      }
     setCurrentThreadId(newThreadId);
 
     try {
+      
       const response = await fetch(
-        `http://localhost:8080/api/thread/${newThreadId}`
+        `${API_BASE}/api/thread/${newThreadId}`, {
+          credentials: "include",
+        }
       );
       const res = await response.json();
       console.log(res);
@@ -34,7 +45,13 @@ const Sidebar = () => {
 
   const deleteThread = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/thread/${id}`, {method: "DELETE"});
+      if(!isloggedIn ){
+        navigate("/login")
+      }
+      const response = await fetch(`${API_BASE}/api/thread/${id}`, {
+        method: "DELETE",
+        credentials: "include"
+      });
       const res = await response.json();
       console.log(res);
       setAllThreads(prev => prev.filter(thread => thread.threadId !== id));
@@ -50,7 +67,10 @@ const Sidebar = () => {
 
   const getAllThreads = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/thread");
+      const response = await fetch(`${API_BASE}/api/thread`,{
+        credentials: "include",
+      }
+      );
       const res = await response.json();
       const filteredData = res.map((thread) => ({
         threadId: thread.threadId,
@@ -65,9 +85,13 @@ const Sidebar = () => {
 
   useEffect(() => {
     getAllThreads();
+    
   }, [currentThreadId, allThreads]);
 
   const createNewChat = () => {
+    if(!isloggedIn ){
+        navigate("/login")
+      }
     setNewChat(true);
     setPrompt("");
     setReply(null);

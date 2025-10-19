@@ -1,9 +1,11 @@
 import "./App.css";
-import Sidebar from "./Sidebar";
-import ChatWindow from "./ChatWindow";
 import { MyContext } from "./MyContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v1 as uuidv1 } from "uuid";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import SignUp from "./SignUp";
+import Home from "./Home";
+import Login from "./Login";
 
 function App() {
   const [prompt, setPrompt] = useState("");
@@ -12,7 +14,11 @@ function App() {
   const [prevChats, setPrevChats] = useState([]);
   const [newChat, setNewChat] = useState([]);
   const [allThreads, setAllThreads] = useState([]);
+  const [isloggedIn, setIsLoggedIn] = useState();
 
+
+  
+  const API_BASE = import.meta.env.VITE_API_URL;
   const providervalue = {
     prompt,
     setPrompt,
@@ -26,14 +32,49 @@ function App() {
     setNewChat,
     allThreads,
     setAllThreads,
+    isloggedIn,
+    setIsLoggedIn,
+    API_BASE
   };
+
+
+  useEffect(() => {
+    const checkLogin = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/user/verify`, {
+        method: "GET",
+        credentials: "include", 
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Logged in:", data.user);
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } catch (err) {
+      console.log("Not logged in", err);
+      setIsLoggedIn(false);
+    }
+  };
+
+  checkLogin();
+  }, [])
 
   return (
     <>
       <div className="app">
         <MyContext.Provider value={providervalue}>
-          <Sidebar />
-          <ChatWindow />
+          <BrowserRouter>
+            {/* <Sidebar />
+            <ChatWindow /> */}
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </BrowserRouter>
         </MyContext.Provider>
       </div>
     </>

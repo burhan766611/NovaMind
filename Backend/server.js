@@ -3,14 +3,22 @@ import 'dotenv/config'
 import cors from 'cors'
 import mongoose from 'mongoose';
 import chatRoutes from './routes/chat.js'
+import userRoutes from './routes/user.js'
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const PORT = 8080;
 
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+}));
+
 
 app.use("/api", chatRoutes);
+app.use("/user", userRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server runing on ${PORT}`);
@@ -53,3 +61,8 @@ const connectDB = async () => {
         console.log("Failed connect with Db ",err);
     }
 }
+
+// app.get("/check-cookie", (req, res) => {
+//   console.log("Cookies:", req.cookies);
+//   res.json(req.cookies);
+// });
