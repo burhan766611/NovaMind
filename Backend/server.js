@@ -20,6 +20,12 @@ app.use(cors({
 app.use("/api", chatRoutes);
 app.use("/user", userRoutes);
 
+app.use(express.static(path.join(process.cwd(), "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "dist", "index.html"));
+});
+
 app.listen(PORT, () => {
     console.log(`Server runing on ${PORT}`);
     connectDB();
