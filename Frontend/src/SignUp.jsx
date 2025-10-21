@@ -18,9 +18,10 @@ const SignUp = () => {
   };
 
   const handleForm = async (e) => {
+    e.preventDefault();
     if(loading) return;
     setLoading(true)
-    e.preventDefault();
+    
     try {
       // const response = await fetch(`${API_BASE}/user/signup`, {
       //   method: "POST",

@@ -26,10 +26,11 @@ const Login = () => {
   };
 
   const handleLoginForm = async (e) => {
+    e.preventDefault();
     if(loading) return;
     setLoading(true);
 
-    e.preventDefault();
+    
     try {
       // const response = await fetch(`${API_BASE}/user/login`, {
       //   method: "POST",

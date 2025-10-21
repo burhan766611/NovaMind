@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignUp from "./SignUp";
 import Home from "./Home";
 import Login from "./Login";
-import API from "../services/API";
+import API from "../services/api"
 
 function App() {
   const [prompt, setPrompt] = useState("");
