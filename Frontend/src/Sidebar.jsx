@@ -17,6 +17,7 @@ const Sidebar = () => {
     setCurrentThreadId,
     setPrevChats,
     isloggedIn,
+    API,
     API_BASE
   } = useContext(MyContext);
 
@@ -28,14 +29,18 @@ const Sidebar = () => {
 
     try {
       
-      const response = await fetch(
-        `${API_BASE}/api/thread/${newThreadId}`, {
-          credentials: "include",
-        }
-      );
-      const res = await response.json();
-      console.log(res);
-      setPrevChats(res);
+      // const response = await fetch(
+      //   `${API_BASE}/api/thread/${newThreadId}`, {
+      //     credentials: "include",
+      //   }
+      // );
+
+      const response = await API.get(`/api/thread/${newThreadId}`);
+      const res = await response.data;
+      console.log(res.msg);
+      setPrevChats(res.msg);
+      // Correct way when you get a response
+      // setPrevChats(prev => [...prev, ...res]);
       setNewChat(false);
       setReply(null);
     } catch (err) {
@@ -48,11 +53,12 @@ const Sidebar = () => {
       if(!isloggedIn ){
         navigate("/login")
       }
-      const response = await fetch(`${API_BASE}/api/thread/${id}`, {
-        method: "DELETE",
-        credentials: "include"
-      });
-      const res = await response.json();
+      // const response = await fetch(`${API_BASE}/api/thread/${id}`, {
+      //   method: "DELETE",
+      //   credentials: "include"
+      // });
+      const response = await API.delete(`/api/thread/${id}`)
+      const res = await response.data;
       console.log(res);
       setAllThreads(prev => prev.filter(thread => thread.threadId !== id));
 
@@ -67,11 +73,13 @@ const Sidebar = () => {
 
   const getAllThreads = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/thread`,{
-        credentials: "include",
-      }
-      );
-      const res = await response.json();
+      // const response = await fetch(`${API_BASE}/api/thread`,{
+      //   credentials: "include",
+      // }
+      // );
+
+      const response = await API.get(`/api/thread`);
+      const res = await response.data;
       const filteredData = res.map((thread) => ({
         threadId: thread.threadId,
         title: thread.title,

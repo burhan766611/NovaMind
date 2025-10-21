@@ -1,53 +1,67 @@
 import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
-import status from "http-status";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import isLogin from "../middleware/Auth.js";
 
 const router = express.Router();
 
-
 router.post("/signup", async (req, res) => {
-  const { username, email, password } = req.body;
+  try {
+    const { username, email, password } = req.body;
 
-  if (!username || !email || !password) {
-    return res.status(status.UNAUTHORIZED).json({ message: "Field Required!" });
+    // Check if all fields are provided
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+         message: "All fields are required!" }); // 400 Bad Request
+    }
+
+    // Check if user already exists
+    const userExist = await User.findOne({ email });
+    if (userExist) {
+      return res
+        .status(409) // 409 Conflict
+        .json({ success: false, message: "User already exists!" });
+    }
+
+    // Hash the password
+    const hashPassword = await bcrypt.hash(password, 12);
+
+    // Create new user
+    const user = new User({
+      username,
+      email,
+      password: hashPassword,
+    });
+
+    await user.save();
+
+    // Send response
+    return res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      user,
+    });
+
+    // console.log("New user created:", username, email);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: "Internal Server Error" }); // 500 for server errors
   }
-
-  const userExist = await User.findOne({ email });
-
-  if (userExist) {
-    return res
-      .status(status.ALREADY_REPORTED)
-      .json({ message: "User Already Exist !" });
-  }
-
-  const hashPassword = await bcrypt.hash(password, 12);
-
-  const user = new User({
-    username,
-    email,
-    password: hashPassword,
-  });
-
-  await user.save();
-
-  res.status(status.CREATED).json({
-    message: "User Created",
-    user: user,
-  });
-
-  console.log(username, email, password);
 });
+
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
     if (!email || !password) {
-      return res.status(status.NOT_FOUND).json({
+      return res.status(400).json({
+        success: false,
         msg: "Field Required !",
       });
     }
@@ -55,7 +69,7 @@ router.post("/login", async (req, res) => {
     const userExist = await User.findOne({ email });
 
     if (!userExist) {
-      return res.status(status.NOT_FOUND).json({
+      return res.status(401).json({
         msg: "Credentials Incorrect !",
         success: false
       });
@@ -64,7 +78,7 @@ router.post("/login", async (req, res) => {
     const result = await bcrypt.compare(password, userExist.password);
 
     if (!result) {
-      return res.status(status.NOT_FOUND).json({
+      return res.status(401).json({
         msg: "Credentials Incorrect !",
         success: false
       });
@@ -85,17 +99,23 @@ router.post("/login", async (req, res) => {
       maxAge: 1 * 60 * 60 * 1000,
     });
 
-    return res.status(status.FOUND).json({
+    return res.status(200).json({
       msg: "Logged in Successfully",
       user: userExist,
       success: true
     });
   } catch (err) {
     console.log(err);
+    res.status(500).json({
+      msg: "Server Error",
+      user: userExist,
+      success: true
+    });
   }
 });
 
 router.get("/verify", isLogin, (req, res) => {
+  console.log(req.user);
   res.status(200).json({
     success: true,
     user: req.user,
@@ -105,10 +125,10 @@ router.get("/verify", isLogin, (req, res) => {
 router.post("/logout", isLogin, (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "none",
   });
-  return res.status(200).json({ message: "Logout successfully" });
+  return res.status(200).json({ success: true, message: "Logout successfully" });
 });
 
 export default router;

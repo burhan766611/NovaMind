@@ -6,6 +6,7 @@ import { v1 as uuidv1 } from "uuid";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const {
     setIsLoggedIn,
     setNewChat,
@@ -13,7 +14,7 @@ const Login = () => {
     setReply,
     setCurrentThreadId,
     setPrevChats,
-    API_BASE
+    API,
   } = useContext(MyContext);
   const [loginData, setLoginData] = useState({
     email: "",
@@ -25,15 +26,20 @@ const Login = () => {
   };
 
   const handleLoginForm = async (e) => {
+    if(loading) return;
+    setLoading(true);
+
     e.preventDefault();
     try {
-      const response = await fetch(`${API_BASE}/user/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(loginData),
-      });
-      const data = await response.json();
+      // const response = await fetch(`${API_BASE}/user/login`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   credentials: "include",
+      //   body: JSON.stringify(loginData),
+      // });
+
+      const response = await API.post(`/user/login`, loginData);
+      const data = await response.data;
       if (data.success) {
         console.log(data.msg);
         setIsLoggedIn(true);
@@ -52,6 +58,8 @@ const Login = () => {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -59,7 +67,7 @@ const Login = () => {
       <div className="loginCard">
         <div className="loginHeader">
           <h1>Welcome Back</h1>
-          <p>Log in to your SigmaGPT account</p>
+          <p>Log in to your NovaMind account</p>
         </div>
         <form onSubmit={handleLoginForm}>
           <div className="formGroup">
@@ -87,7 +95,10 @@ const Login = () => {
           </div>
 
           <div className="formGroup">
-            <button type="submit">Login</button>
+            <button type="submit" disabled={loading}>
+              {/* Login */}
+              {loading ? "Processing..." : "Submit"}
+            </button>
           </div>
         </form>
 

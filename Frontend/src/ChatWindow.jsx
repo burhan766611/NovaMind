@@ -23,6 +23,7 @@ const ChatWindow = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const getReply = async () => {
+    if(loading) return;
     setLoading(true);
     setNewChat(false);
     console.log("message ", prompt, " ThreadId", currentThreadId);
@@ -160,7 +161,7 @@ const handleLogout = async () => {
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => (e.key === "Enter" ? getReply() : "")}
             />
-            <div id="submit" onClick={getReply}>
+            <div role="button" id="submit" onClick={getReply} disabled={loading} >
               <i className="fa-solid fa-paper-plane"></i>
             </div>
           </div>

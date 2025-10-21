@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignUp from "./SignUp";
 import Home from "./Home";
 import Login from "./Login";
+import API from "../services/API";
 
 function App() {
   const [prompt, setPrompt] = useState("");
@@ -16,9 +17,8 @@ function App() {
   const [allThreads, setAllThreads] = useState([]);
   const [isloggedIn, setIsLoggedIn] = useState();
 
-
-  
   const API_BASE = import.meta.env.VITE_API_URL;
+  
   const providervalue = {
     prompt,
     setPrompt,
@@ -34,6 +34,7 @@ function App() {
     setAllThreads,
     isloggedIn,
     setIsLoggedIn,
+    API,
     API_BASE
   };
 
@@ -41,11 +42,8 @@ function App() {
   useEffect(() => {
     const checkLogin = async () => {
     try {
-      const response = await fetch(`${API_BASE}/user/verify`, {
-        method: "GET",
-        credentials: "include", 
-      });
-      const data = await response.json();
+      const response = await API.get("/user/verify");
+      const data = await response.data;
 
       if (data.success) {
         console.log("Logged in:", data.user);

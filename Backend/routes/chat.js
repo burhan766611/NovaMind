@@ -2,7 +2,6 @@ import express from "express";
 import Thread from "../models/Thread.js";
 import getOpenAIAPIResponse from "../utils/openai.js";
 import isLogin from "../middleware/Auth.js";
-import status from "http-status";
 import User from "../models/User.js";
 
 const router = express.Router();
@@ -50,14 +49,17 @@ router.get("/thread/:threadId", isLogin, async (req, res) => {
 
     if (!thread) {
       return res.status().json({
+        success: false,
         error: "Thread Not Found",
       });
     }
 
-    res.json(thread.messages);
+    res.json({msg: thread.messages});
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Failed to fetch chat" });
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to fetch chat" });
   }
 });
 

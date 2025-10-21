@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import "./signup.css";
+import API from "../services/API";
 
 const SignUp = () => {
-    const navigate = useNavigate();
-      
-  const API_BASE = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+
   const [signUpData, setSignUpData] = useState({
     username: "",
     email: "",
@@ -17,24 +18,40 @@ const SignUp = () => {
   };
 
   const handleForm = async (e) => {
+    if(loading) return;
+    setLoading(true)
     e.preventDefault();
     try {
-      const response = await fetch(`${API_BASE}/user/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(signUpData),
-      });
-      const data = await response.json();
-      console.log(data.message);
-      setSignUpData({
-        username: "",
-        email: "",
-        password: "",
-      });
-      navigate("/login")
+      // const response = await fetch(`${API_BASE}/user/signup`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   credentials: "include",
+      //   body: JSON.stringify(signUpData),
+      // });
+      const response = await API.post("/user/signup", signUpData);
+      const data = await response.data;
+      console.log(data);
+      if (data.success) {
+        console.log(data.message);
+        setSignUpData({
+          username: "",
+          email: "",
+          password: "",
+        });
+        navigate("/login");
+      } else {
+        console.log(data.message)
+      }
+      // setSignUpData({
+      //   username: "",
+      //   email: "",
+      //   password: "",
+      // });
+      // navigate("/login")
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -42,7 +59,7 @@ const SignUp = () => {
     <div className="signupContainer">
       <div className="signupCard">
         <div className="signupHeader">
-          <h1>Welcome to SigmaGPT</h1>
+          <h1>Welcome to NovaMind</h1>
           <p>Create your account to get started</p>
         </div>
         <form onSubmit={handleForm}>
@@ -80,7 +97,9 @@ const SignUp = () => {
           </div>
 
           <div className="formGroup">
-            <button type="submit">Sign Up</button>
+            <button type="submit" disabled={loading}>
+            {loading ? "Processing..." : "Sign up"}
+              </button>
           </div>
         </form>
 
