@@ -105,7 +105,7 @@ const handleLogout = async () => {
       <div className="chatWindow">
         <div className="navbar">
           <span>
-            SigmaGPT <i className="fa-solid fa-chevron-down"></i>{" "}
+            NovaMind <i className="fa-solid fa-chevron-down"></i>{" "}
           </span>
           <div className="userIconDiv">
             <span className="userIcon">
