@@ -3,7 +3,7 @@ import "./sidebar.css";
 import { MyContext } from "./MyContext";
 import { v1 as uuidv1 } from "uuid";
 import { useNavigate } from "react-router-dom";
-
+import blacklogo from './assets/blacklogo.png'
 
 const Sidebar = () => {
   let navigate = useNavigate();
@@ -111,7 +111,7 @@ const Sidebar = () => {
     <>
       <section className="sidebar">
         <button onClick={createNewChat}>
-          <img src="src/assets/blacklogo.png" alt="Logo" className="logo" />
+          <img src={blacklogo} alt="Logo" className="logo" />
           <span>
             <i className="fa-solid fa-pen-to-square"></i>
           </span>
