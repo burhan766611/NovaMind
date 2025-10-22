@@ -3,3 +3,6 @@ Frontend/.env
 Backend/node_modules
 Frontend/node_modules
 .DS_Store
+
+# Local Netlify folder
+.netlify

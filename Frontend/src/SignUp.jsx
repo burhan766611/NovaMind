@@ -31,16 +31,20 @@ const SignUp = () => {
       // });
       const response = await API.post("/user/signup", signUpData);
       const data = await response.data;
-      console.log(data);
-      if (data.success) {
-        console.log(data.message);
+      if (data.success) { 
         setSignUpData({
           username: "",
           email: "",
           password: "",
         });
+        console.log(data.message);
         navigate("/login");
       } else {
+        setSignUpData({
+          username: "",
+          email: "",
+          password: "",
+        });
         console.log(data.message)
       }
       // setSignUpData({
@@ -50,6 +54,11 @@ const SignUp = () => {
       // });
       // navigate("/login")
     } catch (err) {
+      setSignUpData({
+          username: "",
+          email: "",
+          password: "",
+        });
       console.log(err);
     } finally {
       setLoading(false); 

@@ -58,6 +58,10 @@ const Login = () => {
         });
       }
     } catch (err) {
+      setLoginData({
+          email: "",
+          password: "",
+        });
       console.log(err);
     } finally {
       setLoading(false);

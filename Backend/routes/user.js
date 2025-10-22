@@ -125,7 +125,7 @@ router.get("/verify", isLogin, (req, res) => {
 router.post("/logout", isLogin, (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: "none",
   });
   return res.status(200).json({ success: true, message: "Logout successfully" });
