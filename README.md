@@ -1,6 +1,7 @@
-# 🧠 SigmaGPT – AI Chat Assistant
+# 🧠 NovaMind – AI Chat Assistant
+[🌐 **Live Demo**](https://novamin.netlify.app)
 
-SigmaGPT is a full-stack MERN application that allows users to chat with an AI assistant using OpenAI’s GPT models.  
+NovaMind is a full-stack MERN application that allows users to chat with an AI assistant using OpenAI’s GPT models.  
 It includes authentication, persistent chat threads, and a clean modern UI.
 
 ## 🚀 Tech Stack
@@ -18,7 +19,7 @@ It includes authentication, persistent chat threads, and a clean modern UI.
 
 ## ⚙️ Installation
 ```bash
-git clone https://github.com/yourusername/sigmaGPT.git
-cd sigmaGPT
+git clone https://github.com/burhan766611/NovaMind.git
+cd NovaMind
 cd backend && npm install
 cd ../frontend && npm install
