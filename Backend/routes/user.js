@@ -15,7 +15,8 @@ router.post("/signup", async (req, res) => {
     if (!username || !email || !password) {
       return res.status(400).json({
         success: false,
-         message: "All fields are required!" }); // 400 Bad Request
+        message: "All fields are required!",
+      }); // 400 Bad Request
     }
 
     // Check if user already exists
@@ -38,6 +39,25 @@ router.post("/signup", async (req, res) => {
 
     await user.save();
 
+    console.log(user);
+
+    const token = jwt.sign(
+      {
+        email: user.email,
+        id: user._id,
+      },
+      process.env.SECRET_KEY
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 1 * 60 * 60 * 1000,
+    });
+
+    console.log(token);
+
     // Send response
     return res.status(201).json({
       success: true,
@@ -48,12 +68,12 @@ router.post("/signup", async (req, res) => {
     // console.log("New user created:", username, email);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: "Internal Server Error" }); // 500 for server errors
+      message: "Internal Server Error",
+    }); // 500 for server errors
   }
 });
-
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -71,7 +91,7 @@ router.post("/login", async (req, res) => {
     if (!userExist) {
       return res.status(401).json({
         msg: "Credentials Incorrect !",
-        success: false
+        success: false,
       });
     }
 
@@ -80,7 +100,7 @@ router.post("/login", async (req, res) => {
     if (!result) {
       return res.status(401).json({
         msg: "Credentials Incorrect !",
-        success: false
+        success: false,
       });
     }
 
@@ -102,14 +122,14 @@ router.post("/login", async (req, res) => {
     return res.status(200).json({
       msg: "Logged in Successfully",
       user: userExist,
-      success: true
+      success: true,
     });
   } catch (err) {
     console.log(err);
     res.status(500).json({
       msg: "Server Error",
       user: userExist,
-      success: true
+      success: true,
     });
   }
 });
@@ -128,7 +148,9 @@ router.post("/logout", isLogin, (req, res) => {
     secure: true,
     sameSite: "none",
   });
-  return res.status(200).json({ success: true, message: "Logout successfully" });
+  return res
+    .status(200)
+    .json({ success: true, message: "Logout successfully" });
 });
 
 export default router;

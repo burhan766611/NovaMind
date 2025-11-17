@@ -1,17 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import "./signup.css";
 import API from "../services/API";
+import { MyContext } from "./MyContext";
+import { v1 as uuidv1 } from "uuid";
 
 const SignUp = () => {
   const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [signUpData, setSignUpData] = useState({
     username: "",
     email: "",
     password: "",
   });
+  const {
+    setIsLoggedIn,
+    setNewChat,
+    setPrompt,
+    setReply,
+    setCurrentThreadId,
+    setPrevChats,
+    API,
+  } = useContext(MyContext);
 
   const handleDataSignUp = (e) => {
     setSignUpData({ ...signUpData, [e.target.name]: e.target.value });
@@ -19,9 +30,9 @@ const SignUp = () => {
 
   const handleForm = async (e) => {
     e.preventDefault();
-    if(loading) return;
-    setLoading(true)
-    
+    if (loading) return;
+    setLoading(true);
+
     try {
       // const response = await fetch(`${API_BASE}/user/signup`, {
       //   method: "POST",
@@ -31,21 +42,27 @@ const SignUp = () => {
       // });
       const response = await API.post("/user/signup", signUpData);
       const data = await response.data;
-      if (data.success) { 
+      if (data.success) {
         setSignUpData({
           username: "",
           email: "",
           password: "",
         });
         console.log(data.message);
-        navigate("/login");
+        setIsLoggedIn(true);
+        setNewChat(true);
+        setPrompt("");
+        setReply(null);
+        setCurrentThreadId(uuidv1());
+        setPrevChats([]);
+        navigate("/");
       } else {
         setSignUpData({
           username: "",
           email: "",
           password: "",
         });
-        console.log(data.message)
+        console.log(data.message);
       }
       // setSignUpData({
       //   username: "",
@@ -55,13 +72,13 @@ const SignUp = () => {
       // navigate("/login")
     } catch (err) {
       setSignUpData({
-          username: "",
-          email: "",
-          password: "",
-        });
+        username: "",
+        email: "",
+        password: "",
+      });
       console.log(err);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -81,6 +98,7 @@ const SignUp = () => {
               name="username"
               value={signUpData.username}
               onChange={handleDataSignUp}
+              required
             />
           </div>
 
@@ -92,6 +110,7 @@ const SignUp = () => {
               name="email"
               value={signUpData.email}
               onChange={handleDataSignUp}
+              required
             />
           </div>
 
@@ -103,13 +122,14 @@ const SignUp = () => {
               name="password"
               value={signUpData.password}
               onChange={handleDataSignUp}
+              required
             />
           </div>
 
           <div className="formGroup">
             <button type="submit" disabled={loading}>
-            {loading ? "Processing..." : "Sign up"}
-              </button>
+              {loading ? "Processing..." : "Sign up"}
+            </button>
           </div>
         </form>
 

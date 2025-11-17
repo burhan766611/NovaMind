@@ -166,7 +166,7 @@ const handleLogout = async () => {
             </div>
           </div>
           <p className="info">
-            SigmaGpt can make mistakes. Check important info. See Cookie
+            Novamind can make mistakes. Check important info. See Cookie
             Preferences.
           </p>
         </div>
